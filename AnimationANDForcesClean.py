@@ -187,10 +187,34 @@ print(pos_data.shape, force_data.shape)
 # In[10]:
 
 
-from vpython import *
+forcepos = np.zeros((force_data.shape[0], 3))
+i = 6
+for row in range(force_data.shape[0]):
+    i = 6
+    k = 0
+    while i < 9:
+        forcepos[row, k] = force_data[row,i]
+        i = i + 1
+        k = k + 1
+
+forcepos2 = np.zeros((force_data.shape[0], 3))
+i = 18
+for row in range(force_data.shape[0]):
+    i = 18
+    k = 0
+    while i < 21:
+        forcepos2[row, k] = force_data[row,i]
+        i = i + 1
+        k = k + 1    
 
 
 # In[11]:
+
+
+from vpython import *
+
+
+# In[14]:
 
 
 def animate(row0): #row0 is first row of animation
@@ -206,7 +230,10 @@ def animate(row0): #row0 is first row of animation
                     balls[j].visible = True
                     if k % 4==0 and l < 2:
                         forces[l].axis = 1.5*vector(force_data[row,k],force_data[row,k+2],force_data[row,k+1])
+                        forces[l].pos = vector(forcepos[row,0],forcepos[row,2],forcepos[row,1])
                         forces[l].visible = True
+                        if l == 1:
+                             forces[l].pos = vector(forcepos2[row,0],forcepos2[row,2],forcepos2[row,1])
                         l = l+1
 
                 else:
@@ -220,13 +247,14 @@ def animate(row0): #row0 is first row of animation
     return row
 
 
-# In[ ]:
+# In[16]:
 
 
 scene=canvas()
 scene.width = 400
 scene.height = 400
 scene.background = color.white
+
 scene.title = "Counter Movement Jump \n"
 x = 500
 y = 1000
@@ -245,13 +273,13 @@ def Run(b):
 
 def rotscene(s):
 #    rotate(scene.up, angle=s, axis=vector(1,0,0) )
-#    scene.up = vector(0,np.cos(s),np.cos(pi/2-s))
-    stext.text = '{:1.2f}'.format(s.value)
+    scene.forward = vector(-np.cos(pi/2-s.value),0,-np.cos(s.value))
+#    stext.text = '{:1.2f}'.format(s.value)
 
 #button(text="Pause", pos=scene.title_anchor, bind=Run)
 button(text="Pause", bind=Run)
 sl = slider(min=0, max=pi/2, value=0, length=200, bind=rotscene, right=15)
-stext = wtext(text='{:1.2f}'.format(sl.value))
+#stext = wtext(text='{:1.2f}'.format(sl.value))
 
 
 # draw axes
@@ -275,10 +303,10 @@ for i in range(pos_data.shape[1]-2):
 #initialize forces
 forces = []
 
-force1 = arrow(pos=vector(500, 0,500), axis=5*vector(force_data[0,0],force_data[0,2],force_data[0,1]), shaftwidth=100, color=(vec(1,1,1)+vec.random())/2 ,  visible = True)
+force1 = arrow(pos=vector(forcepos[0,0],forcepos[0,2],forcepos[0,1]), axis=5*vector(force_data[0,0],force_data[0,2],force_data[0,1]), shaftwidth=50, color=(vec(1,1,1)+vec.random())/2 ,  visible = True)
 forces.append(force1)
 
-force2 = arrow(pos=vector(1000, 0,500), axis=1.5*vector(force_data[12,0],force_data[12,2],force_data[12,1]), shaftwidth=100, color=(vec(1,1,1)+vec.random())/2 ,  visible = True)
+force2 = arrow(pos=vector(forcepos2[0,0],forcepos2[0,2],forcepos2[0,1]), axis=1.5*vector(force_data[12,0],force_data[12,2],force_data[12,1]), shaftwidth=50, color=(vec(1,1,1)+vec.random())/2 ,  visible = True)
 forces.append(force2)
 
 rowPaused = 0

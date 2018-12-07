@@ -23,7 +23,7 @@ for row in datafile:
     if len(row)==0: #test for an empty row
         empty_rows.append(counter)    
     counter += 1
-#print(empty_rows)
+print(empty_rows)
 
 
 # In[3]:
@@ -70,6 +70,7 @@ for row in datafile:
         break
     counter1 = counter1 + 1
     
+force_units[0][0]
 
 
 # In[4]:
@@ -150,36 +151,37 @@ pos_data=data[:,1:-1]
 df1.shape[1]
 data1 = df1.values
 force_data=data1[:,1:-1]
+print(pos_data.shape, force_data.shape)
 
 
 # In[9]:
 
 
-#8                                                                                                                                                                                                                                                                                                                                    plt.figure()
-#plt.figure(figsize=(20, 10))
+# plt.figure()
+# plt.figure(figsize=(20, 10))
 
-#plt.subplot(1,3,1)
-#plt.plot(df['R.Hip_X'], 'r', label = 'X')
-#plt.plot(df['R.Hip_Y'], 'b', label = 'Y')
-#plt.plot(df['R.Hip_Z'], 'g', label = 'Z')
-#plt.title('position')
+# plt.subplot(1,3,1)
+# plt.plot(df['R.Hip_X'], 'r', label = 'X')
+# plt.plot(df['R.Hip_Y'], 'b', label = 'Y')
+# plt.plot(df['R.Hip_Z'], 'g', label = 'Z')
+# plt.title('position')
 
-#plt.subplot(1,3,2)
-#plt.plot(df1['GRW1.F_X'], 'r', label = 'X')
-#plt.plot(df1['GRW1.F_Y'], 'b', label = 'Y')
-#plt.plot(df1['GRW1.F_Z'], 'g', label = 'Z')
-#plt.title('force plate 1')
+# plt.subplot(1,3,2)
+# #plt.plot(df1['GRW1.F_X'], 'r', label = 'X')
+# #plt.plot(df1['GRW1.F_Y'], 'b', label = 'Y')
+# plt.plot(df1['GRW1.F_Z'], 'g', label = 'Z')
+# plt.title('force plate 1')
 
 
-#plt.subplot(1,3,3)
-#plt.plot(df1['GRW2.F_X'], 'r', label = 'X')
-#plt.plot(df1['GRW2.F_Y'], 'b', label = 'Y')
-#plt.plot(df1['GRW2.F_Z'], 'g', label = 'Z')
-#plt.title('force plate 2')
+# plt.subplot(1,3,3)
+# #plt.plot(df1['GRW2.F_X'], 'r', label = 'X')
+# #plt.plot(df1['GRW2.F_Y'], 'b', label = 'Y')
+# plt.plot(df1['GRW2.F_Z'], 'g', label = 'Z')
+# plt.title('force plate 2')
 
-#plt.tight_layout()
-#plt.legend()
-#plt.show()
+# plt.tight_layout()
+# plt.legend()
+# plt.show()
 
 
 # In[10]:
@@ -188,7 +190,37 @@ force_data=data1[:,1:-1]
 from vpython import *
 
 
-# In[ ]:
+# In[11]:
+
+
+def animate(row0): #row0 is first row of animation
+    global rowPaused
+    for row in range(row0,pos_data.shape[0]):
+        rate(40)
+        j=0
+        l = 0
+        for k in range(pos_data.shape[1]-2):
+            if k % 3==0:
+                if pos_data[row,k] != 0:
+                    balls[j].pos = vec(pos_data[row,k],pos_data[row,k+2], pos_data[row,k+1])
+                    balls[j].visible = True
+                    if k % 4==0 and l < 2:
+                        forces[l].axis = 1.5*vector(force_data[row,k],force_data[row,k+2],force_data[row,k+1])
+                        forces[l].visible = True
+                        l = l+1
+
+                else:
+                    balls[j].visible = False
+
+                j = j+1
+        if running==False:
+            rowPaused = row
+            return row
+    rowPaused = 0
+    return row
+
+
+# In[24]:
 
 
 scene=canvas()
@@ -196,6 +228,9 @@ scene.width = 400
 scene.height = 400
 scene.background = color.white
 scene.title = "Counter Movement Jump \n"
+
+middle = scene.center
+
 x = 500
 y = 1000
 z = 1000
@@ -203,15 +238,26 @@ z = 1000
 scene.camera.pos = vector(x, y ,0)
 
 running = True
-
 def Run(b):
     global running
     running = not running 
-    if running: b.text = "Pause"
-    else: b.text = "Run"
-        
-button(text="Pause", pos=scene.title_anchor, bind=Run)
+    if running: 
+        b.text = "Pause"
+    else: 
+        b.text = "Run"
 
+def rotspeed(s):
+#    rotate(scene.up, angle=s, axis=vector(1,0,0) )
+#    scene.up = vector(0,np.cos(s),np.cos(pi/2-s))
+    stext.text = '{:1.2f}'.format(s.value)
+    
+#def rotobject(d):
+    
+
+#button(text="Pause", pos=scene.title_anchor, bind=Run)
+button(text="Pause", bind=Run)
+sl = slider(min=0, max=pi/2, value=0.3, length=200, bind=rotspeed, right=15)
+stext = wtext(text='{:1.2f}'.format(sl.value))
 
 
 # draw axes
@@ -241,53 +287,11 @@ forces.append(force1)
 force2 = arrow(pos=vector(1000, 0,500), axis=1.5*vector(force_data[12,0],force_data[12,2],force_data[12,1]), shaftwidth=100, color=(vec(1,1,1)+vec.random())/2 ,  visible = True)
 forces.append(force2)
 
-
-#click to play animation
-#scene.waitfor("click")
-
-
-#scene.pause("click")
-#play Nplay frames before pausing and waiting for a click
-#Nplay=10
-
-#show evolution of position
-
-
-
+rowPaused = 0
 while True:
-    #if running:
-        for row in range(1,pos_data.shape[0]):
-            #if running:
-                rate(40)
-                j=0
-                l = 0
-                for k in range(pos_data.shape[1]-2):
-                    if k % 3==0:
-                        if pos_data[row,k] != 0:
-                            balls[j].pos = vec(pos_data[row,k],pos_data[row,k+2], pos_data[row,k+1])
-                            balls[j].visible = True
-                            if k % 4==0 and l < 2:
-                                forces[l].axis = 1.5*vector(force_data[row,k],force_data[row,k+2],force_data[row,k+1])
-                                forces[l].visible = True
-                                l = l+1
-
-                        else:
-                            balls[j].visible = False
-
-                        j = j+1
-
-          
-        
-        
-#sl = slider(min=0.3, max=3, value=1.5, length=220, bind=setspeed, right=15)
-#while True:
-    #rate(1/dt)
-   # if running:
-        #scence.rotate(angle=sl.value*dt, axis=vector(0,1,0))
-
-
-
-    #pause
-    #if row % Nplay==0:
-#scene.waitfor("click")
+    rate(10)
+    if not running: continue
+    scene.center = middle
+    scene.camera.pos = vector (x*sl.value, y , z*sl.value)
+    animate(rowPaused)
 
