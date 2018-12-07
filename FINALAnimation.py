@@ -15,7 +15,9 @@ from vpython import *
 
 
 #get the empty rows
-filename='clean_cmj.txt'
+#filename='clean_cmj.txt'
+filename='clean_cut.txt'
+#filename='clean_prowler.txt'
 datafile = csv.reader(open(filename, 'r'), delimiter='\t')
 
 counter = 0 #counter for number of rows
@@ -256,7 +258,13 @@ scene.width = 400
 scene.height = 400
 scene.background = color.white
 
-scene.title = "Counter Movement Jump \n"
+if filename == 'clean_cmj.txt':
+	scene.title = "Counter Movement Jump \n"
+if filename == 'clean_cut.txt':
+	scene.title = "Cut Task \n"
+if filename == 'clean_prowler.txt':
+	scene.title = "Prowler Push \n"
+
 x = 500
 y = 1000
 z = 1000
