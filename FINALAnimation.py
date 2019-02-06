@@ -14,6 +14,8 @@ from vpython import *
 # In[2]:
 
 
+    
+ 
 #get the empty rows
 #filename='clean_cmj.txt'
 filename='clean_cut.txt'
@@ -259,7 +261,7 @@ scene.height = 400
 scene.background = color.white
 
 if filename == 'clean_cmj.txt':
-	scene.title = "Counter Movement Jump \n"
+	scene.title = "Countermovement Jump \n"
 if filename == 'clean_cut.txt':
 	scene.title = "Cut Task \n"
 if filename == 'clean_prowler.txt':
@@ -288,6 +290,7 @@ def rotscene(s):
 #button(text="Pause", pos=scene.title_anchor, bind=Run)
 button(text="Pause", bind=Run)
 sl = slider(min=0, max=pi/2, value=0, length=200, bind=rotscene, right=15)
+#menu(choices=['Countermovement Jump', 'Cut Task', 'Prowler Push'], index=0, bind=M)
 #stext = wtext(text='{:1.2f}'.format(sl.value))
 
 
