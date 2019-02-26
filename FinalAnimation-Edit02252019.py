@@ -14,7 +14,9 @@ import pandas as pd
 
 
 #get the empty rows
-filename='clean_cmj.txt'
+#filename='clean_cmj.txt'
+#filename='clean_cut.txt'
+filename='clean_prowler.txt'
 datafile = csv.reader(open(filename, 'r'), delimiter='\t')
 
 counter = 0 #counter for number of rows
@@ -205,10 +207,7 @@ def animate(row0): #row0 is first row of animation
                     balls[j].visible = False
 
                 j = j+1
-        update()
-#             
-#                 cylinder(pos=name[pair[0]].pos, axis=name[pair[1]].pos - name[pair[0]].pos)
-        
+        update()        
 
         if running==False:
             rowPaused = row
@@ -275,7 +274,7 @@ def join():
          ["R_ASIS", "Sacrum"], ["R_ASIS", "D_Trunk"], ["R_ASIS", "R_Hip"], ["R_ASIS", "L_ASIS"], #20
          ["R_ASIS", "Offset"], ["Sacrum", "Offset"], ["Sacrum", "D_Trunk"], ["L_ASIS", "L_Crest"], #24
          ["L_ASIS", "Sacrum"], ["L_ASIS", "D_Trunk"], ["L_ASIS", "L_Hip"], ["L_ASIS", "Offset"], #28
-         ["L_Crest", "Offset"], ["L_Crest", "L_Hip"],  #30
+         ["L_Crest", "Offset"], ["L_Crest", "L_Hip"], ["L_Crest", "L_Trunk"],["R_Crest", "R_Trunk"],  #30
          #Legs;  
          ["R_Hip", "R_Thigh"], ["R_Hip", "R_Knee"],["R_Hip", "R_Tib"], ["R_Knee", "R_Tib"], #34
          ["R_Knee", "R_MidShank"], ["R_Knee", "R_DistShank"],["R_Tib", "R_Thigh"], ["R_Tib", "R_DistShank"], #38
@@ -301,14 +300,20 @@ def join():
    
     return ()
 
+
 def update ():
     m = 0
     for pair in pairs:
+        if name[pair[0]].visible == True:
+            pipe[m].visible = True	
+
+
+        else:
+            pipe[m].visible = False
+    
         pipe[m].pos = name[pair[0]].pos
         pipe[m].axis = name[pair[1]].pos - name[pair[0]].pos
-            
         m = m + 1
-            
     
     
     
@@ -345,9 +350,7 @@ def Run(b):
         b.text = "Run"
 
 def rotscene(s):
-#    rotate(scene.up, angle=s, axis=vector(1,0,0) )
     scene.forward = vector(-np.cos(pi/2-s.value),0,-np.cos(s.value))
-#    stext.text = '{:1.2f}'.format(s.value)
 
 button(text="Pause", bind=Run)
 sl = slider(min=0, max=pi/2, value=0, length=200, bind=rotscene, right=15)
@@ -372,7 +375,6 @@ for i in range(pos_data.shape[1]-2):
   
 
 #initialize pipes
-
 join() 
 
 #initialize forces
@@ -391,13 +393,7 @@ while True:
     animate(rowPaused)
 
 
-# In[13]:
 
-
-len(pipe)
-
-
-# In[14]:
 
 
 
