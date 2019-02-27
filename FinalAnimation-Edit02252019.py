@@ -14,9 +14,9 @@ import pandas as pd
 
 
 #get the empty rows
-#filename='clean_cmj.txt'
+filename='clean_cmj.txt'
 #filename='clean_cut.txt'
-filename='clean_prowler.txt'
+#filename='clean_prowler.txt'
 datafile = csv.reader(open(filename, 'r'), delimiter='\t')
 
 counter = 0 #counter for number of rows
